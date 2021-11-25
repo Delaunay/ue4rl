@@ -1,4 +1,5 @@
-from ue4ml import UnrealEnv as UnrealEnvBase, LOCALHOST, DEFAULT_PORT
+from ue4ml import UnrealEnv as UnrealEnvBase
+from ue4ml.utils import LOCALHOST, DEFAULT_PORT
 
 
 class UnrealEnv(UnrealEnvBase):
@@ -17,6 +18,10 @@ class UnrealEnv(UnrealEnvBase):
         timeout=20,
         ue4params=None,
     ):
+        self.map = map
+        if ue4params is not None:
+            ue4params.set_default_map_name(self.map)
+
         super(UnrealEnv, self).__init__(
             server_address,
             server_port,
@@ -26,9 +31,5 @@ class UnrealEnv(UnrealEnvBase):
             auto_connect,
             timeout,
             ue4params,
+            project_name=path,
         )
-        self.PROJECT_NAME = path
-        self.map = map
-
-        if ue4params is not None:
-            ue4params.set_default_map_name(self.map)
