@@ -17,8 +17,13 @@ class UnrealEnv(UnrealEnvBase):
         auto_connect=True,
         timeout=20,
         ue4params=None,
+        launch=True,
     ):
         self.map = map
+
+        if launch is False:
+            ue4params = None
+
         if ue4params is not None:
             ue4params.set_default_map_name(self.map)
 
