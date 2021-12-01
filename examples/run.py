@@ -61,22 +61,16 @@ class CartPole(UnrealEnv):
         ret = super().reset(wait_action, skip_time)
         return ret
 
-    def get_reward(self):
-        return self._steps_performed
-
-
     @staticmethod
     def default_agent_config():
         agent_config = AgentConfig()
 
-        # Sensors
+        # Our pawn that the agent is controlling
+        agent_config.avatarClassName = "Cart_Pawn_C"
+
         # Sensors define the observation space
 
-        # Params for all sensors:
-        #   - tick_every_frame
-        #   - tick_every_n_frames
-        #   - tick_every_x_seconds
-
+        # Add our pawn movement (i.e cart movement)
         agent_config.add_sensor(
             "Movement",
             {
@@ -85,23 +79,20 @@ class CartPole(UnrealEnv):
             }
         )
 
-        # Capture the scene as an image itslef
-        # agent_config.add_sensor(
-        #     "Camera",
-        #     {
-        #         "width":
-        #         "height":
-        #         "camera_index":
-        #         "capture_source":
-        #     }
-        # )
+        # Add sight so we can see the pole
+        agent_config.add_sensor(
+            "AIPerception",
+            {
+                "count": "1",                   # Number of actors it can see
+                'sort': 'distance',             # how the actors are sorted `distance`` or `in_front`
+                'peripheral_angle': 360,        # sight cone
+                'mode': 'vector',               # vector (HeadingVector) or rotator
+                                                # max_age
+            }
+        )
 
-        # this is needed if you want your input to work
-        # Actuator mock the player's input
-        # they define the action space
-        #   see void ``U4MLActuator_InputKey::Act(const float DeltaTime)``
+        # Actuators define the action space
         agent_config.add_actuator("InputKey")
-        agent_config.avatarClassName = "CartPole_Pawn_C"
 
         return agent_config
 
@@ -170,7 +161,8 @@ for i in range(args.iter):
 
     while not env.game_over:
         a = random_action(env)
-        print(obs, a, reward, done)
+        # print(obs, a, reward, done)
+        print(reward)
         obs, reward, done, _ = env.step(a)
 
     print("{}: Score: {}".format(i, reward))
